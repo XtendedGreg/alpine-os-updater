@@ -25,7 +25,7 @@ else
 fi
 
 # Exit if the latest version of Alpine Linux is already installed
-if [[ $(echo $ALPINE_RELEASE | tr -d ' ') == $(echo $LATEST_RELEASE | tr -d ' ') ]]; then
+if [[ "$(echo $ALPINE_RELEASE | tr -d ' ')" == "$(echo $LATEST_RELEASE | tr -d ' ')" ]]; then
 	echo "Already the latest version of Alpine Linux. Move along, nothing to see here." | tee -a /tmp/upgradeLog
 	exit 0
 fi
