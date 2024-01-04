@@ -29,7 +29,7 @@ if [[ "$VERSION_ID" == "$LATEST_RELEASE" ]]; then
 	echo "Already the latest version of Alpine Linux. Move along, nothing to see here." | tee -a /tmp/upgradeLog
 	exit 0
 else
-	echo $ALPINE_RELEASE != $LATEST_RELEASE
+	echo $VERSION_ID != $LATEST_RELEASE
 fi
 
 # Update all current packages
