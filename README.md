@@ -7,7 +7,7 @@ This script will update an existing installation of Alpine Linux from a previous
 ## How To Use
  - From ssh or on the console, enter the following command which will download the script and run it
 ```
-wget -qO- https://raw.githubusercontent.com/XtendedGreg/alpine-os-updater/main/upgrade.sh | ash
+wget --no-cache -qO- https://raw.githubusercontent.com/XtendedGreg/alpine-os-updater/main/upgrade.sh | ash
 ```
  - The install script will reboot automatically and will run some cleanup actions after reboot to make sure apk repositories are pointing to the latest version and that packages are updated and installed to match
  - Once the installation is complete, a log file on the root of the boot media will be present
