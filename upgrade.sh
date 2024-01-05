@@ -71,11 +71,19 @@ if [ -z $SKIP_CHECK ]; then
 	mkdir -p /tmp/newRepo/main/${ARCH}
 	if [ -e /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz ]; then rm /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz; fi
 	wget -P /tmp/newRepo/main/${ARCH} https://dl-cdn.alpinelinux.org/alpine/latest-stable/main/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
+ 	if [ ! -e /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz ]; then
+  		echo "Unable to download main repository index for package check.  If you would like to skip this check, use --SKIP_CHECK to skip this function." | tee -a /tmp/upgradeLog
+    		exit 1;
+      	fi
 	echo /tmp/newRepo/main/ > /tmp/repo
 	if [ $COMMUNITY_ENABLED -eq 1 ]; then
 		mkdir -p /tmp/newRepo/community/${ARCH}
 		if [ -e /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz ]; then rm /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz; fi
 		wget -P /tmp/newRepo/community/${ARCH} https://dl-cdn.alpinelinux.org/alpine/latest-stable/community/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
+  		if [ ! -e /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz ]; then
+  			echo "Unable to download community repository index for package check.  If you would like to skip this check, use --SKIP_CHECK to skip this function." | tee -a /tmp/upgradeLog
+    			exit 1;
+      		fi
 		echo /tmp/newRepo/community/ >> /tmp/repo
 	fi
 	if [ -e /tmp/repoMissing ]; then rm /tmp/repoMissing; fi
