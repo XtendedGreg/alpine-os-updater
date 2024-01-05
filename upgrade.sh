@@ -37,15 +37,15 @@ echo "Start Date : $(date)" | tee -a /tmp/upgradeLog
 # Get system Arch and Verify against uname and resolve if there is an issue
 OLDARCH=""
 ARCH=$(cat /etc/apk/arch)
-UNAMEARCH=$($uname -a | rev | awk '{print $2}' | rev)
+UNAMEARCH=$(uname -a | rev | awk '{print $2}' | rev)
 if [[ $UNAMEARCH != $ARCH* ]]; then
 	# ARCH Mismatch
  	OLDARCH=$ARCH
  	# Get list of arch types for latest release
   	for arch in $(wget -qO- https://dl.cdn.alpinelinux.org/alpine/latest-stable/releases/ | grep -e "^<a href=" | cut -d">" -f2 | cut -d"/" -f1); do
-   		if [[ $UNAMEARCH == $arch* ]]; then
+   		if [ $(echo $UNAMEARCH | grep $arch | wc -l) -eq 1 ]; then
      			ARCH=$arch
-			if [[ $($uname -a | rev | awk '{print $2}' | rev) == $arch ]]; then
+			if [[ "$UNAMEARCH" == "$arch" ]]; then
    				# Break on exact match otherwise keep going in case there is a better match
 				break
     			fi
