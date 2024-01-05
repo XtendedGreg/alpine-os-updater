@@ -45,7 +45,7 @@ fi
 
 echo "" | tee -a /tmp/upgradeLog
 echo "################ OS UPGRADE DETAILS ################" | tee -a /tmp/upgradeLog
-echo "" | tee -a /tmp/upgradeLog
+echo "#                                                  #" | tee -a /tmp/upgradeLog
 printf "#       Current Alpine Version : %-17s #\n" $VERSION_ID | tee -a /tmp/upgradeLog
 printf "#        Latest Alpine Version : %-17s #\n" $LATEST_RELEASE | tee -a /tmp/upgradeLog
 printf "#                    LBU Media : %-17s #\n" $LBU_MEDIA | tee -a /tmp/upgradeLog
@@ -56,7 +56,7 @@ if [ $COMMUNITY_ENABLED -eq 1 ]; then
 else
 	printf "# Community Repository Enabled : %-17s #\n" "Yes" | tee -a /tmp/upgradeLog
 fi
-echo "" | tee -a /tmp/upgradeLog
+echo "#                                                  #" | tee -a /tmp/upgradeLog
 echo "####################################################" | tee -a /tmp/upgradeLog
 echo "" | tee -a /tmp/upgradeLog
 
@@ -87,22 +87,21 @@ if [ -z $SKIP_CHECK ]; then
 		echo /tmp/newRepo/community/ >> /tmp/repo
 	fi
 	if [ -e /tmp/repoMissing ]; then rm /tmp/repoMissing; fi
-	echo "" | tee -a /tmp/upgradeLog
 	echo "############### PACKAGE IMPACT CHECK ###############" | tee -a /tmp/upgradeLog
-	printf '%-33s' "# Package" | tee -a /tmp/upgradeLog
+	printf "%-33s" "# Package" | tee -a /tmp/upgradeLog
 	echo "Available         #" | tee -a /tmp/upgradeLog
 	echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
 	for i in $(apk info); do 
-		printf '%-30s' "$i" | tee -a /tmp/upgradeLog
+		printf "# %-28s" "$i" | tee -a /tmp/upgradeLog
 		echo -n " : " | tee -a /tmp/upgradeLog
 		if [ $(apk search --allow-untrusted --exact --repositories-file /tmp/repo $i | wc -l) -ge 1 ]; then # Ignore certificate issues since this may be run on a system without up to date CA-Certs, those will be updated later in the installation
-			echo "Yes" | tee -a /tmp/upgradeLog
+			printf "%-17s #\n" "Yes" | tee -a /tmp/upgradeLog
 		else
-			echo "No" | tee -a /tmp/upgradeLog
-			printf '%-30s' "$i" >> /tmp/repoMissing
+			printf "%-17s #\n" "No" | tee -a /tmp/upgradeLog
+			printf "# %-28s" "$i" >> /tmp/repoMissing
 			echo -n " : " >> /tmp/repoMissing
-			echo "No" >> /tmp/repoMissing
-		fi; 
+			printf "%-17s #\n" "No" >> /tmp/repoMissing
+		fi
 	done
 	echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
 	echo "" | tee -a /tmp/upgradeLog
@@ -111,14 +110,15 @@ if [ -z $SKIP_CHECK ]; then
 	if [ -e /tmp/repoMissing ]; then
 		echo "###### WARNING: BROKEN PACKAGES AFTER UPGRADE ######" | tee -a /tmp/upgradeLog
 		echo "#                     Summary                      #" | tee -a /tmp/upgradeLog
-		printf '%-33s' "# Package" | tee -a /tmp/upgradeLog
-		echo "Available         #" | tee -a /tmp/upgradeLog
+		printf "# %-31s" "Package" | tee -a /tmp/upgradeLog
+		printf "%-17s #\n" "Available" | tee -a /tmp/upgradeLog
 		echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
 		cat /tmp/repoMissing
 		rm /tmp/repoMissing
 		echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
 		echo "" | tee -a /tmp/upgradeLog
 		if [ -z $SKIP_CONFIRM ]; then
+  			unset yn
 			while true; do
 				read -p "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n] " yn
 				case $yn in
