@@ -88,7 +88,8 @@ if [ -z $SKIP_CHECK ]; then
 	fi
 	if [ -e /tmp/repoMissing ]; then rm /tmp/repoMissing; fi
 	echo " ############### PACKAGE IMPACT CHECK ###############" | tee -a /tmp/upgradeLog
-	printf "# %31s" "Package" | tee -a /tmp/upgradeLog
+	printf " # %28s" "Package" | tee -a /tmp/upgradeLog
+ 	echo -n "   " | tee -a /tmp/upgradeLog
 	printf "%-17s #\n" "Available" | tee -a /tmp/upgradeLog
 	echo " #--------------------------------------------------#" | tee -a /tmp/upgradeLog
 	for i in $(apk info); do 
