@@ -123,10 +123,10 @@ if [ -z $SKIP_CHECK ]; then
 				read -n 1 confirm
     				echo $confirm >> /tmp/upgradeLog
 				case $confirm in
-					[Yy]) break;;
-     					[Nn]) exit;;
-	  				"") exit;;
-					* ) echo "Please answer yes (y) or no (n).";;
+					[Yy]) echo "User selected to proceed." | tee -a /tmp/upgradeLog; break;;
+     					[Nn]) echo "User selected No." | tee -a /tmp/upgradeLog; exit;;
+	  				"") echo "Default Option Exit." | tee -a /tmp/upgradeLog; exit;;
+					* ) echo "Please answer yes (y) or no (n)." | tee -a /tmp/upgradeLog;;
 				esac
 			done
 		else
