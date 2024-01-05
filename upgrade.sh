@@ -44,20 +44,20 @@ else
 fi
 
 echo "" | tee -a /tmp/upgradeLog
-echo "########### OS UPGRADE DETAILS ########### " | tee -a /tmp/upgradeLog
+echo "################ OS UPGRADE DETAILS ################" | tee -a /tmp/upgradeLog
 echo "" | tee -a /tmp/upgradeLog
-echo "      Current Alpine Version : $VERSION_ID" | tee -a /tmp/upgradeLog
-echo "       Latest Alpine Version : $LATEST_RELEASE" | tee -a /tmp/upgradeLog
-echo "                   LBU Media : $LBU_MEDIA" | tee -a /tmp/upgradeLog
-echo "                Architecture : $ARCH" | tee -a /tmp/upgradeLog
+printf "#       Current Alpine Version : %-17s #" $VERSION_ID | tee -a /tmp/upgradeLog
+printf "#        Latest Alpine Version : %-17s #" $LATEST_RELEASE | tee -a /tmp/upgradeLog
+printf "#                    LBU Media : %-17s #" $LBU_MEDIA | tee -a /tmp/upgradeLog
+printf "#                 Architecture : %-17s #" $ARCH | tee -a /tmp/upgradeLog
 
 if [ $COMMUNITY_ENABLED -eq 1 ]; then
-	echo "Community Repository Enabled : No" | tee -a /tmp/upgradeLog
+	printf "# Community Repository Enabled : %-17s #" "No" | tee -a /tmp/upgradeLog
 else
-	echo "Community Repository Enabled : Yes" | tee -a /tmp/upgradeLog
+	printf "# Community Repository Enabled : %-17s #" "Yes" | tee -a /tmp/upgradeLog
 fi
 echo "" | tee -a /tmp/upgradeLog
-echo "########################################## " | tee -a /tmp/upgradeLog
+echo "####################################################" | tee -a /tmp/upgradeLog
 echo "" | tee -a /tmp/upgradeLog
 
 # Exit if the latest version of Alpine Linux is already installed
