@@ -103,7 +103,7 @@ if [ -z $SKIP_CHECK ]; then
 			printf "%-17s #\n" "No" >> /tmp/repoMissing
 		fi
 	done
-	echo "#--------------------------------------------------#" | tee -a /tmp/upgradeLog
+	echo "####################################################" | tee -a /tmp/upgradeLog
 	echo "" | tee -a /tmp/upgradeLog
 	rm -r /tmp/newRepo
 	rm /tmp/repo
