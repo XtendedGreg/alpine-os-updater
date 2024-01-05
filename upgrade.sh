@@ -121,14 +121,17 @@ if [ -z $SKIP_CHECK ]; then
 		if [ -z $SKIP_CONFIRM ]; then
 			while true; do
    				echo -n "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n] " | tee -a /tmp/upgradeLog
-				read -n 1 confirm
+				read confirm
     				echo $confirm >> /tmp/upgradeLog
-				case $confirm in
-					[Yy]) echo "User selected to proceed." | tee -a /tmp/upgradeLog; break;;
-     					[Nn]) echo "User selected No." | tee -a /tmp/upgradeLog; exit;;
-	  				"") echo "Default Option Exit." | tee -a /tmp/upgradeLog; exit;;
-					* ) echo "Please answer yes (y) or no (n)." | tee -a /tmp/upgradeLog;;
-				esac
+				if [[ "$confirm" == "y" ]] || [[ "$confirm" == "Y" ]]; then
+					echo "User selected to proceed." | tee -a /tmp/upgradeLog
+     					break
+	  			elif [[ "$confirm" == "n" ]] || [[ "$confirm" == "N" ]] || [[ -z $confirm ]]; then
+     					echo "User selected No." | tee -a /tmp/upgradeLog
+	  				exit
+	  			else
+					echo "Please answer yes (y) or no (n)." | tee -a /tmp/upgradeLog
+				fi
 			done
 		else
 			echo "### SKIP_CONFIRM SET" | tee -a /tmp/upgradeLog
