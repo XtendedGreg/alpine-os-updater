@@ -183,6 +183,9 @@ apk cache clean | tee -a /tmp/upgradeLog
 # Correct packages that did not exist on upgrade
 apk add | tee -a /tmp/upgradeLog
 
+# Upgrade existing packages to the latest version
+apk upgrade | tee -a /tmp/upgradeLog
+
 rc-update del /etc/init.d/os-upgrade | tee /tmp/upgradeLog
 lbu exclude /etc/init.d/os-upgrade /bin/os-upgrade.sh | tee -a /tmp/upgradeLog
 rm /etc/init.d/os-upgrade /bin/os-upgrade.sh
