@@ -76,7 +76,7 @@ if [ -z $SKIP_CHECK ]; then
     		exit 1;
       	fi
 	echo /tmp/newRepo/main/ > /tmp/repo
-	if [ $COMMUNITY_ENABLED -eq 1 ]; then
+	if [ $COMMUNITY_ENABLED -ne 1 ]; then
 		mkdir -p /tmp/newRepo/community/${ARCH}
 		if [ -e /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz ]; then rm /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz; fi
 		wget -P /tmp/newRepo/community/${ARCH} https://dl-cdn.alpinelinux.org/alpine/latest-stable/community/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
