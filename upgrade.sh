@@ -68,12 +68,12 @@ if [ -z $SKIP_CHECK ]; then
 	#### Check Packages to see if there will be any broken dependancies
 	mkdir -p /tmp/newRepo/main/${ARCH}
 	if [ -e /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz ]; then rm /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz; fi
-	wget -qP /tmp/newRepo/main/${ARCH} https://dl-cdn.alpinelinux.org/alpine/latest-stable/main/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
+	wget -P /tmp/newRepo/main/${ARCH} https://dl-cdn.alpinelinux.org/alpine/${LATEST_RELEASE}/main/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
 	echo /tmp/newRepo/main/ > /tmp/repo
 	if [ $COMMUNITY_ENABLED -eq 1 ]; then
 		mkdir -p /tmp/newRepo/community/${ARCH}
 		if [ -e /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz ]; then rm /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz; fi
-		wget -qP /tmp/newRepo/community/${ARCH} https://dl-cdn.alpinelinux.org/alpine/latest-stable/community/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
+		wget -P /tmp/newRepo/community/${ARCH} https://dl-cdn.alpinelinux.org/alpine/${LATEST_RELEASE}/community/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
 		echo /tmp/newRepo/community/ >> /tmp/repo
 	fi
 	if [ -e /tmp/repoMissing ]; then rm /tmp/repoMissing; fi
