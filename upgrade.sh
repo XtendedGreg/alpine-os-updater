@@ -33,11 +33,12 @@ echo "Start Date : $(date)" | tee -a /tmp/upgradeLog
 . /etc/lbu/lbu.conf
 
 ARCH=$(cat /etc/apk/arch)
+APKCACHE=$(cd -P "/etc/apk/cache" && pwd)
 ALPINE_RELEASE=$(cat /media/${LBU_MEDIA}/.alpine-release | awk '{print $1}')
 LATEST_RELEASE=$(wget -qO- https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/latest-releases.yaml | grep version | head -n1 | awk '{print $2}')
-COMMUNITY_ENABLED=$(cat /etc/apk/repositories | grep community | grep -e "^#http" | wc -l)
+COMMUNITY_ENABLED=$(cat /etc/apk/repositories | grep community | grep -v "/edge/" | grep -e "^#http" | wc -l) # Exclude edge repositories
 
-if [ $COMMUNITY_ENABLED -eq 1 ]; then
+if [ $COMMUNITY_ENABLED -eq 1 ]; then # This is inverted
 	APKREPOS_FLAG=""
 else
 	APKREPOS_FLAG="-c"
@@ -143,10 +144,16 @@ fi
 
 #### Start Update
 
-# Update all current packages
+# Comment out edge repositories so we are on latest stable build
+sed -e '/\/edge\// s/^#*/#/' -i /etc/apk/repositories 
+
+# Upgrade all current packages
 apk update | tee -a /tmp/upgradeLog
 apk version -l '<' | tee -a /tmp/upgradeLog
 apk upgrade | tee -a /tmp/upgradeLog
+apk cache -v download | tee -a upgradeLog
+apk cache -v sync | tee -a upgradeLog
+apk cache -v clean | tee -a upgradeLog
 
 # Install run-once finishing script
 echo '#!/sbin/openrc-run
@@ -182,15 +189,20 @@ echo '' | tee /tmp/upgradeLog
 echo 'Moved old repositories list to /etc/apk/repositories.bak' | tee -a /tmp/upgradeLog
 mv /etc/apk/repositories /etc/apk/repositories.bak
 
+# Verify that APK is configured correctly
 setup-apkrepos -1 $APKREPOS_FLAG | tee -a /tmp/upgradeLog #Use first mirror and enable community repository if already enabled
-apk cache sync | tee -a /tmp/upgradeLog
-apk cache clean | tee -a /tmp/upgradeLog
+setup-apkcache $APKCACHE
 
 # Correct packages that did not exist on upgrade
-apk add | tee -a /tmp/upgradeLog
+apk fix | tee -a /tmp/upgradeLog
 
 # Upgrade existing packages to the latest version
 apk upgrade | tee -a /tmp/upgradeLog
+
+# Download Packages to Cache, Sync and Clean
+apk cache -v download  | tee -a /tmp/upgradeLog
+apk cache sync | tee -a /tmp/upgradeLog
+apk cache clean | tee -a /tmp/upgradeLog
 
 rc-update del /etc/init.d/os-upgrade | tee /tmp/upgradeLog
 lbu exclude /etc/init.d/os-upgrade /bin/os-upgrade.sh | tee -a /tmp/upgradeLog
@@ -225,11 +237,21 @@ wget https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/alpine
 wget https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256 | tee -a upgradeLog
 if [ $(sha256sum -c alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256 | grep "alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz: OK" | wc -l) -eq 1 ]; then
 	echo "Alpine Linux Release checksum confirmed. Proceeding with upgrade..." | tee -a upgradeLog
-	rm /media/$LBU_MEDIA/apks/$ARCH/*
-	rm /media/$LBU_MEDIA/cache/*
-	apk update | tee -a upgradeLog
-	apk update | tee -a upgradeLog # Needs to be run twice?
-	apk cache -v download | tee -a upgradeLog
+ 	# Remove old files which will be replaced when new version is extracted
+ 	rm -r /media/$LBU_MEDIA/apks
+  	rm -r /media/$LBU_MEDIA/boot
+   	rm -r /media/$LBU_MEDIA/overlays
+    	rm /media/$LBU_MEDIA/*.dtb
+     	rm /media/$LBU_MEDIA/*.elf
+      	rm /media/$LBU_MEDIA/*.dat
+       	rm /media/$LBU_MEDIA/bootcode.bin
+	rm /media/$LBU_MEDIA/cmdline.txt
+ 	rm /media/$LBU_MEDIA/config.txt
+	#rm /media/$LBU_MEDIA/apks/$ARCH/* # Clear old apk packages from previous version
+	#rm /media/$LBU_MEDIA/cache/*
+	#apk update | tee -a upgradeLog
+	#apk update | tee -a upgradeLog # Needs to be run twice?
+	#apk cache -v download | tee -a upgradeLog
 	tar xzf alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz | tee -a upgradeLog
 	rm alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256
 	echo "Upgrade Complete.  Syncing drive and rebooting..." | tee -a upgradeLog
