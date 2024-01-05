@@ -4,8 +4,10 @@
 # Github: https://github.com/XtendedGreg/alpine-os-updater
 # Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine
 
+if [ -e /tmp/upgradeLog ]; then rm /tmp/upgradeLog; fi # Clear log file if it exists
+
 echo "" | tee /tmp/upgradeLog
-echo "########### Alpine Linux OS Upgrade Start - Initial Pass #############" | tee /tmp/upgradeLog
+echo "########### Alpine Linux OS Upgrade Start - Initial Pass #############" | tee -a /tmp/upgradeLog
 echo "Upgrade Script by : XtendedGreg [https://youtube.com/@XtendedGreg]" | tee -a /tmp/upgradeLog
 echo "Last Update : January 4, 2024" | tee -a /tmp/upgradeLog
 echo "Github : https://github.com/XtendedGreg/alpine-os-updater" | tee -a /tmp/upgradeLog
@@ -32,7 +34,26 @@ echo "Start Date : $(date)" | tee -a /tmp/upgradeLog
 . /etc/os-release
 . /etc/lbu/lbu.conf
 
+# Get system Arch and Verify against uname and resolve if there is an issue
+OLDARCH=""
 ARCH=$(cat /etc/apk/arch)
+UNAMEARCH=$($uname -a | rev | awk '{print $2}' | rev)
+if [[ $UNAMEARCH != $ARCH* ]]; then
+	# ARCH Mismatch
+ 	OLDARCH=$ARCH
+ 	# Get list of arch types for latest release
+  	for arch in $(wget -qO- https://dl.cdn.alpinelinux.org/alpine/latest-stable/releases/ | grep -e "^<a href=" | cut -d">" -f2 | cut -d"/" -f1); do
+   		if [[ $UNAMEARCH == $arch* ]]; then
+     			ARCH=$arch
+			if [[ $($uname -a | rev | awk '{print $2}' | rev) == $arch ]]; then
+   				# Break on exact match otherwise keep going in case there is a better match
+				break
+    			fi
+   		fi
+     	done
+      	echo "Architecture $OLDARCH does not match uname value of $UNAMEARCH.  Using architecture $ARCH instead." | tee -a /tmp/upgradeLog
+fi
+
 APKCACHE=$(cd -P "/etc/apk/cache" && pwd)
 ALPINE_RELEASE=$(cat /media/${LBU_MEDIA}/.alpine-release | awk '{print $1}')
 LATEST_RELEASE=$(wget -qO- https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/latest-releases.yaml | grep version | head -n1 | awk '{print $2}')
@@ -60,6 +81,12 @@ fi
 echo " #                                                  #" | tee -a /tmp/upgradeLog
 echo " ####################################################" | tee -a /tmp/upgradeLog
 echo "" | tee -a /tmp/upgradeLog
+
+# Verify ARCH is currently supported by this script - Raspberry Pi Only right now
+if [ $(cat /media/${LBU_MEDIA}/.alpine-release | awk '{print $1}' | grep "alpine-rpi-" | wc -l) -ne 1 ]; then
+	echo "Currently this upgrade script only supports Raspberry Pi." | tee -a /tmp/upgradeLog
+	exit 0
+fi
 
 # Exit if the latest version of Alpine Linux is already installed
 if [[ $VERSION_ID == $LATEST_RELEASE ]]; then
