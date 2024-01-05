@@ -46,15 +46,15 @@ fi
 echo "" | tee -a /tmp/upgradeLog
 echo "################ OS UPGRADE DETAILS ################" | tee -a /tmp/upgradeLog
 echo "" | tee -a /tmp/upgradeLog
-printf "#       Current Alpine Version : %-17s #" $VERSION_ID | tee -a /tmp/upgradeLog
-printf "#        Latest Alpine Version : %-17s #" $LATEST_RELEASE | tee -a /tmp/upgradeLog
-printf "#                    LBU Media : %-17s #" $LBU_MEDIA | tee -a /tmp/upgradeLog
-printf "#                 Architecture : %-17s #" $ARCH | tee -a /tmp/upgradeLog
+printf "#       Current Alpine Version : %-17s #\n" $VERSION_ID | tee -a /tmp/upgradeLog
+printf "#        Latest Alpine Version : %-17s #\n" $LATEST_RELEASE | tee -a /tmp/upgradeLog
+printf "#                    LBU Media : %-17s #\n" $LBU_MEDIA | tee -a /tmp/upgradeLog
+printf "#                 Architecture : %-17s #\n" $ARCH | tee -a /tmp/upgradeLog
 
 if [ $COMMUNITY_ENABLED -eq 1 ]; then
-	printf "# Community Repository Enabled : %-17s #" "No" | tee -a /tmp/upgradeLog
+	printf "# Community Repository Enabled : %-17s #\n" "No" | tee -a /tmp/upgradeLog
 else
-	printf "# Community Repository Enabled : %-17s #" "Yes" | tee -a /tmp/upgradeLog
+	printf "# Community Repository Enabled : %-17s #\n" "Yes" | tee -a /tmp/upgradeLog
 fi
 echo "" | tee -a /tmp/upgradeLog
 echo "####################################################" | tee -a /tmp/upgradeLog
@@ -95,7 +95,7 @@ if [ -z $SKIP_CHECK ]; then
 	for i in $(apk info); do 
 		printf '%-30s' "$i" | tee -a /tmp/upgradeLog
 		echo -n " : " | tee -a /tmp/upgradeLog
-		if [ $(apk search --exact --repositories-file /tmp/repo $i | wc -l) -ge 1 ]; then
+		if [ $(apk search --allow-untrusted --exact --repositories-file /tmp/repo $i | wc -l) -ge 1 ]; then # Ignore certificate issues since this may be run on a system without up to date CA-Certs, those will be updated later in the installation
 			echo "Yes" | tee -a /tmp/upgradeLog
 		else
 			echo "No" | tee -a /tmp/upgradeLog
