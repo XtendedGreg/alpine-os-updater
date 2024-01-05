@@ -5,7 +5,7 @@
 # Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine
 
 echo "" | tee /tmp/upgradeLog
-echo "########### OS Upgrade Start - Initial Pass #############" | tee /tmp/upgradeLog
+echo "########### Alpine Linux OS Upgrade Start - Initial Pass #############" | tee /tmp/upgradeLog
 echo "Upgrade Script by : XtendedGreg [https://youtube.com/@XtendedGreg]" | tee -a /tmp/upgradeLog
 echo "Last Update : January 4, 2024" | tee -a /tmp/upgradeLog
 echo "Github : https://github.com/XtendedGreg/alpine-os-updater" | tee -a /tmp/upgradeLog
@@ -170,7 +170,7 @@ echo "#!/bin/ash
 # Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine
 
 echo '' | tee /tmp/upgradeLog
-echo '########### OS Upgrade - Finishing Pass #############' | tee -a /tmp/upgradeLog
+echo '########### Alpine Linux OS Upgrade - Finishing Pass #############' | tee -a /tmp/upgradeLog
 echo 'Upgrade Script by : XtendedGreg [https://youtube.com/@XtendedGreg] January 4, 2024' | tee -a /tmp/upgradeLog
 echo 'Github : https://github.com/XtendedGreg/alpine-os-updater' | tee -a /tmp/upgradeLog
 echo 'Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine' | tee -a /tmp/upgradeLog
