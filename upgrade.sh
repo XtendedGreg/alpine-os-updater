@@ -42,7 +42,7 @@ if [[ $UNAMEARCH != $ARCH* ]]; then
 	# ARCH Mismatch
  	OLDARCH=$ARCH
  	# Get list of arch types for latest release
-  	for arch in $(wget -qO- https://dl.cdn.alpinelinux.org/alpine/latest-stable/releases/ | grep -e "^<a href=" | cut -d">" -f2 | cut -d"/" -f1); do
+  	for arch in $(wget -qO- https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/ | grep -e "^<a href=" | cut -d">" -f2 | cut -d"/" -f1); do
    		if [ $(echo $UNAMEARCH | grep $arch | wc -l) -eq 1 ]; then
      			ARCH=$arch
 			if [[ "$UNAMEARCH" == "$arch" ]]; then
