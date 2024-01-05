@@ -17,4 +17,4 @@ wget --no-cache -qO- https://raw.githubusercontent.com/XtendedGreg/alpine-os-upd
 This only works on Raspberry Pi Installations due to the differences in the way the image is loaded vs other architectures that will break the bootloader.
 
 ## Troubleshooting
-If after running this script you end up on a more recent version than the current stable version (edge), it is because you have the edge repositories enabled in ```/etc/apk/repositories``` prior to the upgrade.  Remove the references to the edge repositories and rerun the installer which should bring you back to the latest stable version.
+ - If after running this script you end up on a more recent version than the current stable version (edge), it is because you have the edge repositories enabled in ```/etc/apk/repositories``` prior to the upgrade.  Remove the references to the edge repositories and rerun the installer which should bring you back to the latest stable version.
