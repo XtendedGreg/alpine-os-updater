@@ -121,7 +121,7 @@ if [ -z $SKIP_CHECK ]; then
 		if [ -z $SKIP_CONFIRM ]; then
 			while true; do
    				echo -n "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n] " | tee -a /tmp/upgradeLog
-				read confirm <&1
+				read confirm <&1 # Read from stdout instead of stdin since it would just read next line of script when run through pipe
     				echo $confirm >> /tmp/upgradeLog
 				if [[ "$confirm" == "y" ]] || [[ "$confirm" == "Y" ]]; then
 					echo "User selected to proceed." | tee -a /tmp/upgradeLog
