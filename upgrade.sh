@@ -93,7 +93,7 @@ if [ -z $SKIP_CHECK ]; then
 		rm /tmp/repoMissing
 		echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
 		echo "" | tee -a /tmp/upgradeLog
-		if [ -z $SKIP_CONFIRM ]; then
+		if [ ! -z $SKIP_CONFIRM ]; then
 			while true; do
 				read -p "Do you still want to upgrade to the latest Alpine Linux version(y/[n])? " yn
 				case $yn in
