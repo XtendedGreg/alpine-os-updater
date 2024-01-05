@@ -41,12 +41,27 @@ else
 	APKREPOS_FLAG="-c"
 fi
 
+echo "" | tee -a /tmp/upgradeLog
+echo "########### OS UPGRADE DETAILS ########### " | tee -a /tmp/upgradeLog
+echo "" | tee -a /tmp/upgradeLog
+echo "      Current Alpine Version : $VERSION_ID" | tee -a /tmp/upgradeLog
+echo "       Latest Alpine Version : $LATEST_RELEASE" | tee -a /tmp/upgradeLog
+echo "                   LBU Media : $LBU_MEDIA" | tee -a /tmp/upgradeLog
+echo "                Architecture : $ARCH" | tee -a /tmp/upgradeLog
+
+if [ $COMMUNITY_ENABLED -eq 1 ]; then
+	echo "Community Repository Enabled : No" | tee -a /tmp/upgradeLog
+else
+	echo "Community Repository Enabled : Yes" | tee -a /tmp/upgradeLog
+fi
+echo "" | tee -a /tmp/upgradeLog
+echo "########################################## " | tee -a /tmp/upgradeLog
+echo "" | tee -a /tmp/upgradeLog
+
 # Exit if the latest version of Alpine Linux is already installed
 if [[ $VERSION_ID == $LATEST_RELEASE ]]; then
 	echo "Already the latest version of Alpine Linux. Move along, nothing to see here." | tee -a /tmp/upgradeLog
 	exit 0
-else
-	echo $VERSION_ID != $LATEST_RELEASE
 fi
 
 if [ -z $SKIP_CHECK ]; then
@@ -182,23 +197,6 @@ rc-update add os-upgrade default | tee -a /tmp/upgradeLog
 
 # Save final config before upgrade starts
 lbu commit
-
-echo "" | tee -a /tmp/upgradeLog
-echo "########### OS UPGRADE DETAILS ########### " | tee -a /tmp/upgradeLog
-echo "" | tee -a /tmp/upgradeLog
-echo "      Current Alpine Version : $VERSION_ID" | tee -a /tmp/upgradeLog
-echo "       Latest Alpine Version : $LATEST_RELEASE" | tee -a /tmp/upgradeLog
-echo "                   LBU Media : $LBU_MEDIA" | tee -a /tmp/upgradeLog
-echo "                Architecture : $ARCH" | tee -a /tmp/upgradeLog
-
-if [ $COMMUNITY_ENABLED -eq 1 ]; then
-	echo "Community Repository Enabled : No" | tee -a /tmp/upgradeLog
-else
-	echo "Community Repository Enabled : Yes" | tee -a /tmp/upgradeLog
-fi
-echo "" | tee -a /tmp/upgradeLog
-echo "########################################## " | tee -a /tmp/upgradeLog
-echo "" | tee -a /tmp/upgradeLog
 
 cd /media/$LBU_MEDIA
 mount -o remount,rw /media/$LBU_MEDIA
