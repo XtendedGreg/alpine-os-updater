@@ -95,10 +95,11 @@ if [ -z $SKIP_CHECK ]; then
 		echo "" | tee -a /tmp/upgradeLog
 		if [ -z $SKIP_CONFIRM ]; then
 			while true; do
-				read -p "Do you still want to upgrade to the latest Alpine Linux version(y/[n])? " yn
+				read -p "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n] " yn
 				case $yn in
 					[Yy]* ) break;;
-					* ) exit;;
+     					[Nn]* ) exit;;
+					* ) echo "Please answer yes (y) or no (n).";;
 				esac
 			done
 		else
