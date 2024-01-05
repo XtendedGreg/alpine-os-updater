@@ -88,17 +88,17 @@ if [ -z $SKIP_CHECK ]; then
 	fi
 	if [ -e /tmp/repoMissing ]; then rm /tmp/repoMissing; fi
 	echo "############### PACKAGE IMPACT CHECK ###############" | tee -a /tmp/upgradeLog
-	printf "%-33s" "# Package" | tee -a /tmp/upgradeLog
-	echo "Available         #" | tee -a /tmp/upgradeLog
+	printf "# %31s" "Package" | tee -a /tmp/upgradeLog
+	printf "%-17s #\n" "Available" | tee -a /tmp/upgradeLog
 	echo "#--------------------------------------------------#" | tee -a /tmp/upgradeLog
 	for i in $(apk info); do 
-		printf "# %-28s" "$i" | tee -a /tmp/upgradeLog
+		printf "# %28s" "$i" | tee -a /tmp/upgradeLog
 		echo -n " : " | tee -a /tmp/upgradeLog
 		if [ $(apk search --allow-untrusted --exact --repositories-file /tmp/repo $i | wc -l) -ge 1 ]; then # Ignore certificate issues since this may be run on a system without up to date CA-Certs, those will be updated later in the installation
 			printf "%-17s #\n" "Yes" | tee -a /tmp/upgradeLog
 		else
 			printf "%-17s #\n" "No" | tee -a /tmp/upgradeLog
-			printf "# %-28s" "$i" >> /tmp/repoMissing
+			printf "# %28s" "$i" >> /tmp/repoMissing
 			echo -n " : " >> /tmp/repoMissing
 			printf "%-17s #\n" "No" >> /tmp/repoMissing
 		fi
@@ -110,7 +110,7 @@ if [ -z $SKIP_CHECK ]; then
 	if [ -e /tmp/repoMissing ]; then
 		echo "###### WARNING: BROKEN PACKAGES AFTER UPGRADE ######" | tee -a /tmp/upgradeLog
 		echo "#                     Summary                      #" | tee -a /tmp/upgradeLog
-		printf "# %-31s" "Package" | tee -a /tmp/upgradeLog
+		printf "# %31s" "Package" | tee -a /tmp/upgradeLog
 		printf "%-17s #\n" "Available" | tee -a /tmp/upgradeLog
 		echo "#--------------------------------------------------#" | tee -a /tmp/upgradeLog
 		cat /tmp/repoMissing
