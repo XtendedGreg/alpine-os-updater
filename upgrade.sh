@@ -119,7 +119,9 @@ if [ -z $SKIP_CHECK ]; then
 		echo "" | tee -a /tmp/upgradeLog
 		if [ -z $SKIP_CONFIRM ]; then
 			while true; do
-				read -n 1 "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n]" confirm
+   				echo -n "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n] " | tee -a /tmp/upgradeLog
+				read -n 1 confirm
+    				echo $confirm >> /tmp/upgradeLog
 				case $confirm in
 					[Yy]) break;;
      					[Nn]) exit;;
