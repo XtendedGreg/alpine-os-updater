@@ -49,7 +49,7 @@ else
 	echo $VERSION_ID != $LATEST_RELEASE
 fi
 
-if [ $SKIP_CHECK ]; then
+if [ -z $SKIP_CHECK ]; then
 	#### Check Packages to see if there will be any broken dependancies
 	mkdir -p /tmp/newRepo/main/${ARCH}
 	if [ -e /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz ]; then rm /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz; fi
@@ -106,7 +106,7 @@ if [ $SKIP_CHECK ]; then
 		fi
 	fi
 else
-	echo "### SKIP_CHECKS SET" | tee -a /tmp/upgradeLog
+	echo "### SKIP_CHECK SET" | tee -a /tmp/upgradeLog
 fi
 
 #### Start Update
