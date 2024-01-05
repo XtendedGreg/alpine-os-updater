@@ -90,7 +90,7 @@ if [ -z $SKIP_CHECK ]; then
 	echo "############### PACKAGE IMPACT CHECK ###############" | tee -a /tmp/upgradeLog
 	printf "%-33s" "# Package" | tee -a /tmp/upgradeLog
 	echo "Available         #" | tee -a /tmp/upgradeLog
-	echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
+	echo "#--------------------------------------------------#" | tee -a /tmp/upgradeLog
 	for i in $(apk info); do 
 		printf "# %-28s" "$i" | tee -a /tmp/upgradeLog
 		echo -n " : " | tee -a /tmp/upgradeLog
@@ -103,7 +103,7 @@ if [ -z $SKIP_CHECK ]; then
 			printf "%-17s #\n" "No" >> /tmp/repoMissing
 		fi
 	done
-	echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
+	echo "#--------------------------------------------------#" | tee -a /tmp/upgradeLog
 	echo "" | tee -a /tmp/upgradeLog
 	rm -r /tmp/newRepo
 	rm /tmp/repo
@@ -112,18 +112,18 @@ if [ -z $SKIP_CHECK ]; then
 		echo "#                     Summary                      #" | tee -a /tmp/upgradeLog
 		printf "# %-31s" "Package" | tee -a /tmp/upgradeLog
 		printf "%-17s #\n" "Available" | tee -a /tmp/upgradeLog
-		echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
+		echo "#--------------------------------------------------#" | tee -a /tmp/upgradeLog
 		cat /tmp/repoMissing
 		rm /tmp/repoMissing
-		echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
+		echo "####################################################" | tee -a /tmp/upgradeLog
 		echo "" | tee -a /tmp/upgradeLog
 		if [ -z $SKIP_CONFIRM ]; then
-  			unset yn
 			while true; do
-				read -p "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n] " yn
-				case $yn in
-					[Yy]* ) break;;
-     					[Nn]* ) exit;;
+				read -n 1 -p "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n]" confirm
+				case $confirm in
+					[Yy]) break;;
+     					[Nn]) exit;;
+	  				"") exit;;
 					* ) echo "Please answer yes (y) or no (n).";;
 				esac
 			done
