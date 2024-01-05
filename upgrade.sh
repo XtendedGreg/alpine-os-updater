@@ -8,6 +8,23 @@ echo "########### OS Upgrade Start - Initial Pass #############" | tee /tmp/upgr
 echo "Upgrade Script by : XtendedGreg [https://youtube.com/@XtendedGreg] January 4, 2024" | tee -a /tmp/upgradeLog
 echo "Github : https://github.com/XtendedGreg/alpine-os-updater" | tee -a /tmp/upgradeLog
 echo "Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine" | tee -a /tmp/upgradeLog
+
+while [ $# -gt 0 ]; do
+    if [[ $1 == "--"* ]]; then
+        v="${1/--/}"
+        eval $v=1
+        shift
+    fi
+    shift
+done
+
+if [ ! -z $help ]; then
+	echo "" | tee -a /tmp/upgradeLog
+	echo "Usage: $0 [--SKIP_CHECK] [--SKIP_CONFIRM]" | tee -a /tmp/upgradeLog
+	echo "" | tee -a /tmp/upgradeLog
+	exit 0
+fi
+
 echo "Start Date : $(date)" | tee -a /tmp/upgradeLog
 
 . /etc/os-release
@@ -31,6 +48,68 @@ if [[ $VERSION_ID == $LATEST_RELEASE ]]; then
 else
 	echo $VERSION_ID != $LATEST_RELEASE
 fi
+
+if [ $SKIP_CHECK ]; then
+	#### Check Packages to see if there will be any broken dependancies
+	mkdir -p /tmp/newRepo/main/${ARCH}
+	if [ -e /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz ]; then rm /tmp/newRepo/main/${ARCH}/APKINDEX.tar.gz; fi
+	wget -qP /tmp/newRepo/main/${ARCH} https://dl-cdn.alpinelinux.org/alpine/latest-stable/main/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
+	echo /tmp/newRepo/main/ > /tmp/repo
+	if [ $COMMUNITY_ENABLED -eq 1 ]; then
+		mkdir -p /tmp/newRepo/community/${ARCH}
+		if [ -e /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz ]; then rm /tmp/newRepo/community/${ARCH}/APKINDEX.tar.gz; fi
+		wget -qP /tmp/newRepo/community/${ARCH} https://dl-cdn.alpinelinux.org/alpine/latest-stable/community/${ARCH}/APKINDEX.tar.gz | tee -a /tmp/upgradeLog
+		echo /tmp/newRepo/community/ >> /tmp/repo
+	fi
+	if [ -e /tmp/repoMissing ]; then rm /tmp/repoMissing; fi
+	echo "" | tee -a /tmp/upgradeLog
+	echo "############### PACKAGE IMPACT CHECK ###############" | tee -a /tmp/upgradeLog
+	printf '%-33s' "# Package" | tee -a /tmp/upgradeLog
+	echo "Available         #" | tee -a /tmp/upgradeLog
+	echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
+	for i in $(apk info); do 
+		printf '%-30s' "$i" | tee -a /tmp/upgradeLog
+		echo -n " : " | tee -a /tmp/upgradeLog
+		if [ $(apk search --exact --repositories-file /tmp/repo $i | wc -l) -ge 1 ]; then
+			echo "Yes" | tee -a /tmp/upgradeLog
+		else
+			echo "No" | tee -a /tmp/upgradeLog
+			printf '%-30s' "$i" >> /tmp/repoMissing
+			echo -n " : " >> /tmp/repoMissing
+			echo "No" >> /tmp/repoMissing
+		fi; 
+	done
+	echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
+	echo "" | tee -a /tmp/upgradeLog
+	rm -r /tmp/newRepo
+	rm /tmp/repo
+	if [ -e /tmp/repoMissing ]; then
+		echo "###### WARNING: BROKEN PACKAGES AFTER UPGRADE ######" | tee -a /tmp/upgradeLog
+		echo "#                     Summary                      #" | tee -a /tmp/upgradeLog
+		printf '%-33s' "# Package" | tee -a /tmp/upgradeLog
+		echo "Available         #" | tee -a /tmp/upgradeLog
+		echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
+		cat /tmp/repoMissing
+		rm /tmp/repoMissing
+		echo "----------------------------------------------------" | tee -a /tmp/upgradeLog
+		echo "" | tee -a /tmp/upgradeLog
+		if [ -z $SKIP_CONFIRM ]; then
+			while true; do
+				read -p "Do you still want to upgrade to the latest Alpine Linux version(y/[n])? " yn
+				case $yn in
+					[Yy]* ) break;;
+					* ) exit;;
+				esac
+			done
+		else
+			echo "### SKIP_CONFIRM SET" | tee -a /tmp/upgradeLog
+		fi
+	fi
+else
+	echo "### SKIP_CHECKS SET" | tee -a /tmp/upgradeLog
+fi
+
+#### Start Update
 
 # Update all current packages
 apk update | tee -a /tmp/upgradeLog
