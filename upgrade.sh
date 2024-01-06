@@ -161,7 +161,8 @@ if [ -z $SKIP_CHECK ]; then
 	if [ -e /tmp/repoMissing ]; then
 		echo " ########### WARNING: BROKEN PACKAGES AFTER UPGRADE ###########" | tee -a /tmp/upgradeLog
 		echo " #                          Summary                           #" | tee -a /tmp/upgradeLog
-		printf " # %31s" "Package" | tee -a /tmp/upgradeLog
+		printf " # %28s" "Package" | tee -a /tmp/upgradeLog
+  		echo -n "   " | tee -a /tmp/upgradeLog
 		printf "%-27s #\n" "Available" | tee -a /tmp/upgradeLog
 		echo " #------------------------------------------------------------#" | tee -a /tmp/upgradeLog
 		cat /tmp/repoMissing | tee -a /tmp/upgradeLog
