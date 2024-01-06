@@ -267,7 +267,7 @@ if [ -z $SKIP_INSTALL ]; then
 	" >> /bin/os-upgrade.sh
 fi
 
-echo"
+echo "
 # Copy over local repositories that are not commented out
 cat /etc/apk/repositories.bak | grep -v 'http' | grep -e -v '^#' > /etc/apk/repositories
 
