@@ -159,7 +159,7 @@ if [ -z $SKIP_CHECK ]; then
 	rm -r /tmp/newRepo
 	rm /tmp/repo
 	if [ -e /tmp/repoMissing ]; then
-		echo " ########### WARNING: BROKEN PACKAGES AFTER UPGRADE ###########" | tee -a /tmp/upgradeLog
+		echo " ########## WARNING: MISSING PACKAGES AFTER UPGRADE ###########" | tee -a /tmp/upgradeLog
 		echo " #                          Summary                           #" | tee -a /tmp/upgradeLog
 		printf " # %28s" "Package" | tee -a /tmp/upgradeLog
   		echo -n "   " | tee -a /tmp/upgradeLog
@@ -240,6 +240,9 @@ echo '' | tee -a /tmp/upgradeLog
 
 echo 'Moved old repositories list to /etc/apk/repositories.bak' | tee -a /tmp/upgradeLog
 mv -v /etc/apk/repositories /etc/apk/repositories.bak 2>&1 | tee -a /tmp/upgradeLog
+
+# Copy over local repositories that are not commented out
+cat /etc/apk/repositories.bak | grep -v 'http' | grep -e -v '^*#' > /etc/apk/repositories
 
 # Verify that APK is configured correctly
 # Use first mirror and enable community repository if already enabled
