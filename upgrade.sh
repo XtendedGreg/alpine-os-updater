@@ -269,7 +269,7 @@ fi
 
 echo "
 # Copy over local repositories that are not commented out
-cat /etc/apk/repositories.bak | grep -v 'http' | grep -e -v '^#' > /etc/apk/repositories
+cat /etc/apk/repositories.bak | grep -v 'http' | grep -e -v '^\#' > /etc/apk/repositories
 
 # Verify that APK is configured correctly
 # Use first mirror and enable community repository if already enabled
