@@ -235,6 +235,8 @@ echo 'Upgrade Script by : XtendedGreg [https://youtube.com/@XtendedGreg] January
 echo 'Github : https://github.com/XtendedGreg/alpine-os-updater' | tee -a /tmp/upgradeLog
 echo 'Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine' | tee -a /tmp/upgradeLog
 echo '' | tee -a /tmp/upgradeLog
+echo \"Startup Date: \$(date)\" | tee -a /tmp/upgradeLog
+echo '' | tee -a /tmp/upgradeLog
 
 echo 'Moved old repositories list to /etc/apk/repositories.bak' | tee -a /tmp/upgradeLog
 mv -v /etc/apk/repositories /etc/apk/repositories.bak 2>&1 | tee -a /tmp/upgradeLog
