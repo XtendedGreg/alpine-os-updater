@@ -41,7 +41,7 @@ if [[ $UNAMEARCH != $ARCH* ]]; then
 	# ARCH Mismatch
  	BESTARCH=$ARCH
  	# Get list of arch types for latest release
-  	for arch in $(wget -qO- https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/ | grep -e "^<a href=" | cut -d">" -f2 | cut -d"/" -f1); do
+  	for arch in $(wget -qO- https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/ | grep -e "^<a href=" | cut -d">" -f2 | cut -d"/" -f1 ); do
    		if [ $(echo $UNAMEARCH | grep $arch | wc -l) -eq 1 ]; then
      			BESTARCH=$arch
 			if [[ "$UNAMEARCH" == "$arch" ]]; then
@@ -198,12 +198,12 @@ fi
 sed -e '/\/edge\// s/^#*/#/' -i /etc/apk/repositories 
 
 # Upgrade all current packages
-apk update | tee -a /tmp/upgradeLog
+apk update &> | tee -a /tmp/upgradeLog
 apk version -l '<' | tee -a /tmp/upgradeLog
-apk upgrade | tee -a /tmp/upgradeLog
+apk upgrade &> | tee -a /tmp/upgradeLog
 # apk cache -v clean | tee -a /tmp/upgradeLog
-apk cache -v download | tee -a /tmp/upgradeLog
-apk cache -v sync | tee -a /tmp/upgradeLog
+apk cache -v download &> | tee -a /tmp/upgradeLog
+apk cache -v sync &> | tee -a /tmp/upgradeLog
 
 # Install run-once finishing script
 echo '#!/sbin/openrc-run
@@ -229,37 +229,37 @@ echo "#!/bin/ash
 # By: XtendedGreg - https://youtube.com/@XtendedGreg
 # Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine
 
-echo '' | tee /tmp/upgradeLog
+echo '' | tee -a /tmp/upgradeLog
 echo '########### Alpine Linux OS Upgrade - Finishing Pass #############' | tee -a /tmp/upgradeLog
 echo 'Upgrade Script by : XtendedGreg [https://youtube.com/@XtendedGreg] January 4, 2024' | tee -a /tmp/upgradeLog
 echo 'Github : https://github.com/XtendedGreg/alpine-os-updater' | tee -a /tmp/upgradeLog
 echo 'Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine' | tee -a /tmp/upgradeLog
-echo '' | tee /tmp/upgradeLog
+echo '' | tee -a /tmp/upgradeLog
 
 echo 'Moved old repositories list to /etc/apk/repositories.bak' | tee -a /tmp/upgradeLog
-mv -v /etc/apk/repositories /etc/apk/repositories.bak | tee -a /tmp/upgradeLog
+mv -v /etc/apk/repositories /etc/apk/repositories.bak &> | tee -a /tmp/upgradeLog
 
 # Verify that APK is configured correctly
 # Use first mirror and enable community repository if already enabled
-setup-apkrepos -1 $APKREPOS_FLAG | tee -a /tmp/upgradeLog
-setup-apkcache $APKCACHE | tee -a /tmp/upgradeLog
-
-# Correct packages that did not exist on upgrade
-apk fix | tee -a /tmp/upgradeLog
+setup-apkrepos -1 $APKREPOS_FLAG &> | tee -a /tmp/upgradeLog
+setup-apkcache $APKCACHE &> | tee -a /tmp/upgradeLog
 
 # Upgrade existing packages to the latest version
-apk upgrade | tee -a /tmp/upgradeLog
+apk upgrade &> | tee -a /tmp/upgradeLog
 
 # Download Packages to Cache, Sync and Clean
-apk cache -v download  | tee -a /tmp/upgradeLog
-apk cache sync | tee -a /tmp/upgradeLog
-apk cache clean | tee -a /tmp/upgradeLog
+apk cache -v download &> | tee -a /tmp/upgradeLog
+apk cache sync &> | tee -a /tmp/upgradeLog
+apk cache clean &> | tee -a /tmp/upgradeLog
+
+# Correct packages that did not exist on upgrade
+apk fix &> | tee -a /tmp/upgradeLog
 
 rc-update del /etc/init.d/os-upgrade | tee -a /tmp/upgradeLog
-lbu exclude /etc/init.d/os-upgrade /bin/os-upgrade.sh | tee -a /tmp/upgradeLog
+lbu exclude /etc/init.d/os-upgrade /bin/os-upgrade.sh &> | tee -a /tmp/upgradeLog
 rm /etc/init.d/os-upgrade /bin/os-upgrade.sh
 
-lbu commit | tee -a /tmp/upgradeLog
+lbu commit &> | tee -a /tmp/upgradeLog
 
 . /etc/lbu/lbu.conf
 echo \"########### OS Upgrade Complete - New Version : \$(cat /media/\${LBU_MEDIA}/.alpine-release | awk '{print \$1}') #############\" | tee -a /tmp/upgradeLog
@@ -272,52 +272,52 @@ rm /tmp/upgradeLog
 mount -o remount,ro /media/$LBU_MEDIA
 " > /bin/os-upgrade.sh
 chmod +x /bin/os-upgrade.sh
-lbu add /etc/init.d/os-upgrade /bin/os-upgrade.sh | tee -a /tmp/upgradeLog
+lbu add /etc/init.d/os-upgrade /bin/os-upgrade.sh &> | tee -a /tmp/upgradeLog
 
 echo "Adding post-upgrade run-once script to RC" | tee -a /tmp/upgradeLog
-rc-update add os-upgrade default | tee -a /tmp/upgradeLog
+rc-update add os-upgrade default &> | tee -a /tmp/upgradeLog
 
 # Save final config before upgrade starts
-lbu commit
+lbu commit &> | tee -a /tmp/upgradeLog
 
 cd /media/$LBU_MEDIA
-mount -o remount,rw /media/$LBU_MEDIA
+mount -o remount,rw /media/$LBU_MEDIA &> | tee -a /tmp/upgradeLog
 cat /tmp/upgradeLog >> upgradeLog
 rm /tmp/upgradeLog
-wget https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz | tee -a upgradeLog
-wget https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256 | tee -a upgradeLog
+wget https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz &> | tee -a upgradeLog
+wget https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256 &> | tee -a upgradeLog
 if [ $(sha256sum -c alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256 | grep "alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz: OK" | wc -l) -eq 1 ]; then
 	echo "Alpine Linux Release checksum confirmed. Proceeding with upgrade..." | tee -a upgradeLog
  	# Remove old files which will be replaced when new version is extracted
- 	rm -r /media/$LBU_MEDIA/apks
-  	rm -r /media/$LBU_MEDIA/boot
-   	rm -r /media/$LBU_MEDIA/overlays
-    	rm /media/$LBU_MEDIA/*.dtb
-     	rm /media/$LBU_MEDIA/*.elf
-      	rm /media/$LBU_MEDIA/*.dat
-       	rm /media/$LBU_MEDIA/bootcode.bin
-	rm /media/$LBU_MEDIA/cmdline.txt
- 	rm /media/$LBU_MEDIA/config.txt
+ 	rm -r /media/$LBU_MEDIA/apks &> | tee -a /tmp/upgradeLog
+  	rm -r /media/$LBU_MEDIA/boot &> | tee -a /tmp/upgradeLog
+   	rm -r /media/$LBU_MEDIA/overlays &> | tee -a /tmp/upgradeLog
+    	rm /media/$LBU_MEDIA/*.dtb &> | tee -a /tmp/upgradeLog
+     	rm /media/$LBU_MEDIA/*.elf &> | tee -a /tmp/upgradeLog
+      	rm /media/$LBU_MEDIA/*.dat &> | tee -a /tmp/upgradeLog
+       	rm /media/$LBU_MEDIA/bootcode.bin &> | tee -a /tmp/upgradeLog
+	rm /media/$LBU_MEDIA/cmdline.txt &> | tee -a /tmp/upgradeLog
+ 	rm /media/$LBU_MEDIA/config.txt &> | tee -a /tmp/upgradeLog
 	#rm /media/$LBU_MEDIA/apks/$ARCH/* # Clear old apk packages from previous version
 	#rm /media/$LBU_MEDIA/cache/*
 	#apk update | tee -a upgradeLog
 	#apk update | tee -a upgradeLog # Needs to be run twice?
 	#apk cache -v download | tee -a upgradeLog
-	tar xzf alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz | tee -a upgradeLog
-	rm alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256
+	tar xzf alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz &> | tee -a upgradeLog
+	rm alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256 &> | tee -a upgradeLog
 	echo "Upgrade Complete.  Syncing drive and rebooting..." | tee -a upgradeLog
 	echo "" | tee -a upgradeLog
-	sync
+	sync &> | tee -a upgradeLog
 	reboot
 else
 	echo "DOWNLOADED FILE CHECKSUM FAILURE. ABORTING AND CLEANING UP." | tee -a upgradeLog
-	rm alpine-rpi-$LATEST_RELEASE-$ARCH.tar.gz alpine-rpi-$LATEST_RELEASE-$ARCH.tar.gz.sha256
+	rm alpine-rpi-$LATEST_RELEASE-$ARCH.tar.gz alpine-rpi-$LATEST_RELEASE-$ARCH.tar.gz.sha256 &> | tee -a upgradeLog
 	
-	rc-update del /etc/init.d/os-upgrade | tee -a upgradeLog
-	lbu exclude /etc/init.d/os-upgrade /bin/os-upgrade.sh | tee -a upgradeLog
-	rm /etc/init.d/os-upgrade /bin/os-upgrade.sh
+	rc-update del /etc/init.d/os-upgrade &> | tee -a upgradeLog
+	lbu exclude /etc/init.d/os-upgrade /bin/os-upgrade.sh &> | tee -a upgradeLog
+	rm /etc/init.d/os-upgrade /bin/os-upgrade.sh &> | tee -a upgradeLog
 
-	lbu commit | tee -a upgradeLog
+	lbu commit &>| tee -a upgradeLog
 	echo "CLEANUP COMPLETE. EXITING WITH ERROR CODE 1." | tee -a upgradeLog
 	echo "View upgrade log: /media/$LBU_MEDIA/upgradeLog" | tee -a upgradeLog
 	echo "" | tee -a upgradeLog
