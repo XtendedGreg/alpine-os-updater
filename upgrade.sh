@@ -178,9 +178,9 @@ sed -e '/\/edge\// s/^#*/#/' -i /etc/apk/repositories
 apk update | tee -a /tmp/upgradeLog
 apk version -l '<' | tee -a /tmp/upgradeLog
 apk upgrade | tee -a /tmp/upgradeLog
-apk cache -v download | tee -a upgradeLog
-apk cache -v sync | tee -a upgradeLog
-apk cache -v clean | tee -a upgradeLog
+apk cache -v clean | tee -a /tmp/upgradeLog
+apk cache -v download | tee -a /tmp/upgradeLog
+apk cache -v sync | tee -a /tmp/upgradeLog
 
 # Install run-once finishing script
 echo '#!/sbin/openrc-run
@@ -214,11 +214,12 @@ echo 'Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine' | tee -a /tmp
 echo '' | tee /tmp/upgradeLog
 
 echo 'Moved old repositories list to /etc/apk/repositories.bak' | tee -a /tmp/upgradeLog
-mv /etc/apk/repositories /etc/apk/repositories.bak
+mv -v /etc/apk/repositories /etc/apk/repositories.bak | tee -a /tmp/upgradeLog
 
 # Verify that APK is configured correctly
-setup-apkrepos -1 $APKREPOS_FLAG | tee -a /tmp/upgradeLog #Use first mirror and enable community repository if already enabled
-setup-apkcache $APKCACHE
+# Use first mirror and enable community repository if already enabled
+setup-apkrepos -1 $APKREPOS_FLAG | tee -a /tmp/upgradeLog
+setup-apkcache $APKCACHE | tee -a /tmp/upgradeLog
 
 # Correct packages that did not exist on upgrade
 apk fix | tee -a /tmp/upgradeLog
@@ -231,7 +232,7 @@ apk cache -v download  | tee -a /tmp/upgradeLog
 apk cache sync | tee -a /tmp/upgradeLog
 apk cache clean | tee -a /tmp/upgradeLog
 
-rc-update del /etc/init.d/os-upgrade | tee /tmp/upgradeLog
+rc-update del /etc/init.d/os-upgrade | tee -a /tmp/upgradeLog
 lbu exclude /etc/init.d/os-upgrade /bin/os-upgrade.sh | tee -a /tmp/upgradeLog
 rm /etc/init.d/os-upgrade /bin/os-upgrade.sh
 
