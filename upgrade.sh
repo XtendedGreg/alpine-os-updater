@@ -51,6 +51,7 @@ if [[ $UNAMEARCH != $ARCH* ]]; then
     			fi
    		fi
      	done
+      	echo "" | tee -a /tmp/upgradeLog
       	echo "Architecture $OLDARCH does not match uname value of $UNAMEARCH.  Using architecture $ARCH instead." | tee -a /tmp/upgradeLog
 fi
 
