@@ -35,16 +35,15 @@ echo "Start Date : $(date)" | tee -a /tmp/upgradeLog
 . /etc/lbu/lbu.conf
 
 # Get system Arch and Verify against uname and resolve if there is an issue
-OLDARCH=""
 ARCH=$(cat /etc/apk/arch)
 UNAMEARCH=$(uname -a | rev | awk '{print $2}' | rev)
 if [[ $UNAMEARCH != $ARCH* ]]; then
 	# ARCH Mismatch
- 	OLDARCH=$ARCH
+ 	BESTARCH=$ARCH
  	# Get list of arch types for latest release
   	for arch in $(wget -qO- https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/ | grep -e "^<a href=" | cut -d">" -f2 | cut -d"/" -f1); do
    		if [ $(echo $UNAMEARCH | grep $arch | wc -l) -eq 1 ]; then
-     			ARCH=$arch
+     			BESTARCH=$arch
 			if [[ "$UNAMEARCH" == "$arch" ]]; then
    				# Break on exact match otherwise keep going in case there is a better match
 				break
@@ -52,7 +51,7 @@ if [[ $UNAMEARCH != $ARCH* ]]; then
    		fi
      	done
       	echo "" | tee -a /tmp/upgradeLog
-      	echo "Architecture $OLDARCH does not match uname value of $UNAMEARCH.  Using architecture $ARCH instead." | tee -a /tmp/upgradeLog
+      	echo "NOTICE: Architecture $ARCH does not match uname value of $UNAMEARCH.  You may want to change to $BESTARCH instead for your hardware." | tee -a /tmp/upgradeLog
 fi
 
 APKCACHE=$(cd -P "/etc/apk/cache" && pwd)
