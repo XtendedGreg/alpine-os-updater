@@ -145,7 +145,7 @@ if [ -z $SKIP_CHECK ]; then
 	for i in $(apk info); do 
 		printf " # %28s" "$i" | tee -a /tmp/upgradeLog
 		echo -n " : " | tee -a /tmp/upgradeLog
-		if [ $(apk search --allow-untrusted --exact --repositories-file /tmp/repo $i | wc -l) -ge 1 ]; then # Ignore certificate issues since this may be run on a system without up to date CA-Certs, those will be updated later in the installation
+		if [ $(apk search --allow-untrusted --exact --repositories-file /tmp/repo $i 2> /dev/null | wc -l) -ge 1 ]; then # Ignore certificate issues since this may be run on a system without up to date CA-Certs, those will be updated later in the installation
 			printf "%-27s #\n" "Yes" | tee -a /tmp/upgradeLog
 		else
 			printf "%-27s #\n" "No" | tee -a /tmp/upgradeLog
