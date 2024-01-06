@@ -52,7 +52,7 @@ if [[ $UNAMEARCH != $ARCH* ]]; then
      	done
       	echo "" | tee -a /tmp/upgradeLog
       	echo -n "NOTICE: Architecture $ARCH does not match uname value of $UNAMEARCH. "
-       	if [[ "$ARCH" != "" ]; then
+       	if [[ "$ARCH" != "" ]]; then
 		echo "You may want to change to $BESTARCH instead for your hardware." | tee -a /tmp/upgradeLog
      	fi
       	echo "WARNING: While your hardware is working with this version of Alpine Linux now for this architecture, the upgraded version may not." | tee -a /tmp/upgradeLog
