@@ -37,7 +37,7 @@ echo "Start Date : $(date)" | tee -a /tmp/upgradeLog
 # Get system Arch and Verify against uname and resolve if there is an issue
 ARCH=$(cat /etc/apk/arch)
 UNAMEARCH=$(uname -a | rev | awk '{print $2}' | rev)
-if [[ $UNAMEARCH != $ARCH* ]]; then
+if [[ $UNAMEARCH != $ARCH* ]] && [[ $UNAMEARCH != $ARCH ]]; then
 	# ARCH Mismatch
  	BESTARCH=$ARCH
  	# Get list of arch types for latest release
