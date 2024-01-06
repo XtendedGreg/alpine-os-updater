@@ -119,8 +119,8 @@ if [[ $VERSION_ID == $LATEST_RELEASE ]]; then
 		echo $confirm >> /tmp/upgradeLog
 		if [[ "$confirm" == "y" ]] || [[ "$confirm" == "Y" ]]; then
 			echo "User selected to proceed." | tee -a /tmp/upgradeLog
-   			SKIP_CHECK=
-      			SKIP_INSTALL=
+   			SKIP_CHECK=1
+      			SKIP_INSTALL=1
 			break
 		elif [[ "$confirm" == "n" ]] || [[ "$confirm" == "N" ]] || [[ -z $confirm ]]; then
 			echo "User selected No." | tee -a /tmp/upgradeLog
