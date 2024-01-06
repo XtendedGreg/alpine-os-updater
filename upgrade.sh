@@ -164,7 +164,7 @@ if [ -z $SKIP_CHECK ]; then
 		printf " # %31s" "Package" | tee -a /tmp/upgradeLog
 		printf "%-27s #\n" "Available" | tee -a /tmp/upgradeLog
 		echo " #------------------------------------------------------------#" | tee -a /tmp/upgradeLog
-		cat /tmp/repoMissing
+		cat /tmp/repoMissing | tee -a /tmp/upgradeLog
 		rm /tmp/repoMissing
 		echo " ##############################################################" | tee -a /tmp/upgradeLog
 		echo "" | tee -a /tmp/upgradeLog
