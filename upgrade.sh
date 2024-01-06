@@ -209,7 +209,7 @@ fi
 
 #### Start Update
 
-if [ ! -z $SKIP_INSTALL ]; then
+if [ -z $SKIP_INSTALL ]; then
 
 # Comment out edge repositories so we are on latest stable build
 sed -e '/\/edge\// s/^#*/#/' -i /etc/apk/repositories 2>&1 | tee -a /tmp/upgradeLog
@@ -260,7 +260,7 @@ echo \"Startup Date: \$(date)\" | tee -a /tmp/upgradeLog
 echo '' | tee -a /tmp/upgradeLog
 " > /bin/os-upgrade.sh
 
-if [ ! -z $SKIP_INSTALL ]; then
+if [ -z $SKIP_INSTALL ]; then
 	echo "
 	echo 'Moved old repositories list to /etc/apk/repositories.bak' | tee -a /tmp/upgradeLog
 	mv -v /etc/apk/repositories /etc/apk/repositories.bak 2>&1 | tee -a /tmp/upgradeLog
@@ -310,7 +310,7 @@ mount -o remount,ro /media/$LBU_MEDIA
 " >> /bin/os-upgrade.sh
 chmod +x /bin/os-upgrade.sh 2>&1 | tee -a /tmp/upgradeLog
 
-if [ ! -z $SKIP_INSTALL ]; then
+if [ -z $SKIP_INSTALL ]; then
 
 	lbu add /etc/init.d/os-upgrade /bin/os-upgrade.sh 2>&1 | tee -a /tmp/upgradeLog
 	
