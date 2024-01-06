@@ -24,7 +24,7 @@ done
 
 if [ ! -z $help ]; then
 	echo "" | tee -a /tmp/upgradeLog
-	echo "Usage: $0 [--SKIP_CHECK] [--SKIP_CONFIRM]" | tee -a /tmp/upgradeLog
+	echo "Usage: $0 [--CONFIRM_ARCH] [--SKIP_CHECK] [--SKIP_CONFIRM]" | tee -a /tmp/upgradeLog
 	echo "" | tee -a /tmp/upgradeLog
 	exit 0
 fi
@@ -51,7 +51,29 @@ if [[ $UNAMEARCH != $ARCH* ]]; then
    		fi
      	done
       	echo "" | tee -a /tmp/upgradeLog
-      	echo "NOTICE: Architecture $ARCH does not match uname value of $UNAMEARCH.  You may want to change to $BESTARCH instead for your hardware." | tee -a /tmp/upgradeLog
+      	echo -n "NOTICE: Architecture $ARCH does not match uname value of $UNAMEARCH. "
+       	if [[ "$ARCH" != "" ]; then
+		echo "You may want to change to $BESTARCH instead for your hardware." | tee -a /tmp/upgradeLog
+     	fi
+      	echo "WARNING: While your hardware is working with this version of Alpine Linux now for this architecture, the upgraded version may not." | tee -a /tmp/upgradeLog
+      	if [ -z $CONFIRM_ARCH ]; then
+		while true; do
+			echo -n "Do you still want to upgrade to the latest Alpine Linux version(y/n)? [n] " | tee -a /tmp/upgradeLog
+			read confirm <&1 # Read from stdout instead of stdin since it would just read next line of script when run through pipe
+			echo $confirm >> /tmp/upgradeLog
+			if [[ "$confirm" == "y" ]] || [[ "$confirm" == "Y" ]]; then
+				echo "User selected to proceed." | tee -a /tmp/upgradeLog
+				break
+			elif [[ "$confirm" == "n" ]] || [[ "$confirm" == "N" ]] || [[ -z $confirm ]]; then
+				echo "User selected No." | tee -a /tmp/upgradeLog
+				exit
+			else
+				echo "Please answer yes (y) or no (n)." | tee -a /tmp/upgradeLog
+			fi
+		done
+	else
+		echo "### CONFIRM_ARCH SET" | tee -a /tmp/upgradeLog
+	fi
 fi
 
 APKCACHE=$(cd -P "/etc/apk/cache" && pwd)
@@ -178,7 +200,7 @@ sed -e '/\/edge\// s/^#*/#/' -i /etc/apk/repositories
 apk update | tee -a /tmp/upgradeLog
 apk version -l '<' | tee -a /tmp/upgradeLog
 apk upgrade | tee -a /tmp/upgradeLog
-apk cache -v clean | tee -a /tmp/upgradeLog
+# apk cache -v clean | tee -a /tmp/upgradeLog
 apk cache -v download | tee -a /tmp/upgradeLog
 apk cache -v sync | tee -a /tmp/upgradeLog
 
