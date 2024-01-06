@@ -66,20 +66,20 @@ else
 fi
 
 echo "" | tee -a /tmp/upgradeLog
-echo " ################ OS UPGRADE DETAILS ################" | tee -a /tmp/upgradeLog
-echo " #                                                  #" | tee -a /tmp/upgradeLog
-printf " #       Current Alpine Version : %-17s #\n" $VERSION_ID | tee -a /tmp/upgradeLog
-printf " #        Latest Alpine Version : %-17s #\n" $LATEST_RELEASE | tee -a /tmp/upgradeLog
-printf " #                    LBU Media : %-17s #\n" $LBU_MEDIA | tee -a /tmp/upgradeLog
-printf " #                 Architecture : %-17s #\n" $ARCH | tee -a /tmp/upgradeLog
+echo " ##################### OS UPGRADE DETAILS #####################" | tee -a /tmp/upgradeLog
+echo " #                                                            #" | tee -a /tmp/upgradeLog
+printf " #       Current Alpine Version : %-27s #\n" $VERSION_ID | tee -a /tmp/upgradeLog
+printf " #        Latest Alpine Version : %-27s #\n" $LATEST_RELEASE | tee -a /tmp/upgradeLog
+printf " #                    LBU Media : %-27s #\n" $LBU_MEDIA | tee -a /tmp/upgradeLog
+printf " #                 Architecture : %-27s #\n" $ARCH | tee -a /tmp/upgradeLog
 
 if [ $COMMUNITY_ENABLED -eq 1 ]; then
-	printf " # Community Repository Enabled : %-17s #\n" "No" | tee -a /tmp/upgradeLog
+	printf " # Community Repository Enabled : %-27s #\n" "No" | tee -a /tmp/upgradeLog
 else
-	printf " # Community Repository Enabled : %-17s #\n" "Yes" | tee -a /tmp/upgradeLog
+	printf " # Community Repository Enabled : %-27s #\n" "Yes" | tee -a /tmp/upgradeLog
 fi
-echo " #                                                  #" | tee -a /tmp/upgradeLog
-echo " ####################################################" | tee -a /tmp/upgradeLog
+echo " #                                                            #" | tee -a /tmp/upgradeLog
+echo " ##############################################################" | tee -a /tmp/upgradeLog
 echo "" | tee -a /tmp/upgradeLog
 
 # Verify ARCH is currently supported by this script - Raspberry Pi Only right now
@@ -115,24 +115,24 @@ if [ -z $SKIP_CHECK ]; then
 		echo /tmp/newRepo/community/ >> /tmp/repo
 	fi
 	if [ -e /tmp/repoMissing ]; then rm /tmp/repoMissing; fi
-	echo " ############### PACKAGE IMPACT CHECK ###############" | tee -a /tmp/upgradeLog
+	echo " #################### PACKAGE IMPACT CHECK ####################" | tee -a /tmp/upgradeLog
 	printf " # %28s" "Package" | tee -a /tmp/upgradeLog
  	echo -n "   " | tee -a /tmp/upgradeLog
-	printf "%-17s #\n" "Available" | tee -a /tmp/upgradeLog
-	echo " #--------------------------------------------------#" | tee -a /tmp/upgradeLog
+	printf "%-27s #\n" "Available" | tee -a /tmp/upgradeLog
+	echo " #------------------------------------------------------------#" | tee -a /tmp/upgradeLog
 	for i in $(apk info); do 
 		printf " # %28s" "$i" | tee -a /tmp/upgradeLog
 		echo -n " : " | tee -a /tmp/upgradeLog
 		if [ $(apk search --allow-untrusted --exact --repositories-file /tmp/repo $i | wc -l) -ge 1 ]; then # Ignore certificate issues since this may be run on a system without up to date CA-Certs, those will be updated later in the installation
-			printf "%-17s #\n" "Yes" | tee -a /tmp/upgradeLog
+			printf "%-27s #\n" "Yes" | tee -a /tmp/upgradeLog
 		else
-			printf "%-17s #\n" "No" | tee -a /tmp/upgradeLog
+			printf "%-27s #\n" "No" | tee -a /tmp/upgradeLog
 			printf " # %28s" "$i" >> /tmp/repoMissing
 			echo -n " : " >> /tmp/repoMissing
-			printf "%-17s #\n" "No" >> /tmp/repoMissing
+			printf "%-27s #\n" "No" >> /tmp/repoMissing
 		fi
 	done
-	echo " ####################################################" | tee -a /tmp/upgradeLog
+	echo " ##############################################################" | tee -a /tmp/upgradeLog
 	echo "" | tee -a /tmp/upgradeLog
 	rm -r /tmp/newRepo
 	rm /tmp/repo
@@ -140,11 +140,11 @@ if [ -z $SKIP_CHECK ]; then
 		echo " ###### WARNING: BROKEN PACKAGES AFTER UPGRADE ######" | tee -a /tmp/upgradeLog
 		echo " #                     Summary                      #" | tee -a /tmp/upgradeLog
 		printf " # %31s" "Package" | tee -a /tmp/upgradeLog
-		printf "%-17s #\n" "Available" | tee -a /tmp/upgradeLog
-		echo " #--------------------------------------------------#" | tee -a /tmp/upgradeLog
+		printf "%-27s #\n" "Available" | tee -a /tmp/upgradeLog
+		echo " #------------------------------------------------------------#" | tee -a /tmp/upgradeLog
 		cat /tmp/repoMissing
 		rm /tmp/repoMissing
-		echo " ####################################################" | tee -a /tmp/upgradeLog
+		echo " ##############################################################" | tee -a /tmp/upgradeLog
 		echo "" | tee -a /tmp/upgradeLog
 		if [ -z $SKIP_CONFIRM ]; then
 			while true; do
