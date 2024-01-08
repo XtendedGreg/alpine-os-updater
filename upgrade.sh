@@ -79,7 +79,7 @@ fi
 APKCACHE=$(cd -P "/etc/apk/cache" && pwd)
 ALPINE_RELEASE=$(cat /media/${LBU_MEDIA}/.alpine-release | awk '{print $1}')
 LATEST_RELEASE=$(wget -qO- https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/latest-releases.yaml | grep version | head -n1 | awk '{print $2}')
-COMMUNITY_ENABLED=$(cat /etc/apk/repositories | grep community | grep -v "/edge/" | grep -e "^#http" | wc -l) # Exclude edge repositories
+COMMUNITY_ENABLED=$(cat /etc/apk/repositories | grep community | grep -v "/edge/" | grep -e "^\#http" | wc -l) # Exclude edge repositories
 
 if [ $COMMUNITY_ENABLED -eq 1 ]; then # This is inverted
 	APKREPOS_FLAG=""
