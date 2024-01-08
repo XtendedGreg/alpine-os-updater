@@ -1,6 +1,9 @@
 # alpine-os-updater
-A script to upgrade the Alpine Linux OS on Raspberry Pi
-By XtendedGreg https://youtube.com/@XtendedGreg
+A script to upgrade Alpine Linux OS on Raspberry Pi
+
+Written By XtendedGreg https://youtube.com/@XtendedGreg
+
+YouTube Video: https://youtube.com/live/Kg4a-Wf1pZE
 
 ## Purpose
  - This script will update an existing installation of Alpine Linux from a previous version to the latest release.  This will perform the upgrade in place and will preserve the community repository inclusion from the previous version for apk.  A reboot is required as part of the upgrade, and a script will run to complete the transition of the apk repository settings, and correcting installations of packages that have to updated automatically on first boot.
