@@ -4,10 +4,7 @@
 # Github: https://github.com/XtendedGreg/alpine-os-updater
 # Based on https://wiki.alpinelinux.org/wiki/Upgrading_Alpine
 
-if [ -e /tmp/upgradeLog ]; then rm /tmp/upgradeLog; fi # Clear log file if it exists
-
-echo "" | tee /tmp/upgradeLog
-echo "########### Alpine Linux OS Upgrade Start - Initial Pass #############" | tee -a /tmp/upgradeLog
+echo "########### Alpine Linux OS Upgrade Start - Initial Pass #############" | tee /tmp/upgradeLog
 echo "Upgrade Script by : XtendedGreg [https://youtube.com/@XtendedGreg]" | tee -a /tmp/upgradeLog
 echo "Last Update : January 4, 2024" | tee -a /tmp/upgradeLog
 echo "Github : https://github.com/XtendedGreg/alpine-os-updater" | tee -a /tmp/upgradeLog
@@ -36,8 +33,8 @@ echo "Start Date : $(date)" | tee -a /tmp/upgradeLog
 
 # Get system Arch and Verify against uname and resolve if there is an issue
 ARCH=$(cat /etc/apk/arch)
-UNAMEARCH=$(uname -a | rev | awk '{print $2}' | rev)
-if [ $(echo $ARCH | grep "$UNAMEARCH" | wc -l) -ne 1 ]; then
+UNAMEARCH=$(uname -m)
+if [[ "$ARCH" != "$UNAMEARCH" ]]; then
 	# ARCH Mismatch
  	BESTARCH=$ARCH
  	# Get list of arch types for latest release
@@ -76,7 +73,7 @@ if [ $(echo $ARCH | grep "$UNAMEARCH" | wc -l) -ne 1 ]; then
 	fi
 fi
 
-APKCACHE=$(cd -P "/etc/apk/cache" && pwd)
+APKCACHE='/etc/apk/cache'
 ALPINE_RELEASE=$(cat /media/${LBU_MEDIA}/.alpine-release | awk '{print $1}')
 LATEST_RELEASE=$(wget -qO- https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/latest-releases.yaml | grep version | head -n1 | awk '{print $2}')
 COMMUNITY_ENABLED=$(cat /etc/apk/repositories | grep community | grep -v "/edge/" | grep -e "^\#http" | wc -l) # Exclude edge repositories
@@ -326,7 +323,7 @@ if [ -z $SKIP_INSTALL ]; then
 	rm /tmp/upgradeLog 2>&1 | tee -a upgradeLog
 	wget https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz 2>&1 | tee -a upgradeLog
 	wget https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/${ARCH}/alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256 2>&1 | tee -a upgradeLog
-	if [ $(sha256sum -c alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256 | grep "alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz: OK" | wc -l) -eq 1 ]; then
+	if sha256sum -c --status alpine-rpi-${LATEST_RELEASE}-${ARCH}.tar.gz.sha256; then
 		echo "Alpine Linux Release checksum confirmed. Proceeding with upgrade..." | tee -a upgradeLog
 	 	# Remove old files which will be replaced when new version is extracted
 	 	rm -r /media/$LBU_MEDIA/apks 2>&1 | tee -a upgradeLog
